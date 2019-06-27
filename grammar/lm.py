@@ -4,6 +4,7 @@ from parse import parse
 from parse import SingleInputParser
 from copy import deepcopy
 
+
 def find_terminals(rules, visited, which, found):
     if which in visited: return
     visited[which] = 1
@@ -15,6 +16,7 @@ def find_terminals(rules, visited, which, found):
                 find_terminals(rules, visited, t, found)
             elif t != 'END' and t != 'ANY' and t != '|-':
                 found.append(t)
+
 
 def find_sequences(rules, visited, which, found=[], level=0):
     if which in visited and visited[which]: return
@@ -33,6 +35,7 @@ def find_sequences(rules, visited, which, found=[], level=0):
                 new_level += 1
         #print new_found
     visited[which] = 0
+
 
 def build_n_grams(rules, n_max):
     gram = [{}]
@@ -94,6 +97,7 @@ def build_n_grams(rules, n_max):
                 print(word, end=" ")
             print('')
 
+
 def make_lm(rules, visited, which, prefix):
     if which in visited: return
     visited[which] = 1
@@ -109,12 +113,14 @@ def make_lm(rules, visited, which, prefix):
                 print(prefix, t)
                 new_prefix.append(t)
 
+
 def get_terminals(parser):
     visited = {}
     terminals = []
     find_terminals(parser.rules, visited, 'START', terminals)
     keywords = set(terminals)
     return sorted(keywords)
+
 
 if __name__ == '__main__':
     import sys
