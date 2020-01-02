@@ -14,7 +14,7 @@ class Automator:
     def execute(self, command):
         if command == '': return
 
-        print "`%s`" % command
+        print("`%s`" % command)
         if self.real:
             os.system(command)
 

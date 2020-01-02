@@ -1,4 +1,5 @@
 # Represents a node containing some commands to execute.
+# Silvius Speech AST
 
 from copy import deepcopy
 
@@ -27,11 +28,11 @@ class AST:
 def printAST(ast, level=0):
     if level > 10: return
 
-    print '    ' * level,
+    print('    ' * level, end=" ")
     if ast and len(ast) > 0:
-        print ast, '{'
+        print(ast, '{')
         for child in ast:
             printAST(child, level + 1)
-        print '    ' * level, '}'
+        print('    ' * level, '}')
     else:
-        print ast
+        print(ast)

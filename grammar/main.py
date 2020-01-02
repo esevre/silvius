@@ -1,12 +1,12 @@
 # Main file. Parse new commands from stdin until EOF.
-
+# todo: update with python3 print statements
 from scan import find_keywords
 from scan import scan
 from parse import parse
 from parse import GrammaticalError
 from parse import SingleInputParser
 from execute import execute
-from ast import printAST
+from grammar.ast import printAST
 
 if __name__ == '__main__':
     import sys
@@ -24,15 +24,15 @@ if __name__ == '__main__':
         if line == '': break
         if line == '\n': continue
 
-        print ">", line,
+        print(">", line, end=" ")
         try:
             ast = parse(parser, scan(line))
             printAST(ast)
             execute(ast, f == sys.stdin)
         except GrammaticalError as e:
-            print "Error:", e
+            print("Error:", e)
 
     if f != sys.stdin:
         f.close()
 
-    print 'ok'
+    print('ok')

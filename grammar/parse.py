@@ -422,10 +422,10 @@ class SingleInputParser(CoreParser):
         '''
         if args[-1].type == 'sleep':
             self.sleeping = True
-            print 'Going to sleep.'
+            print('Going to sleep.')
         else:
             self.sleeping = False
-            print 'Waking from sleep'
+            print('Waking from sleep')
         return AST('')
 
     def p_single_input(self, args):

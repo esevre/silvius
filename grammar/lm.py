@@ -91,8 +91,8 @@ def build_n_grams(rules, n_max):
     for g in gram[n]:
         for seq in gram[n][g]:
             for word in seq:
-                print word,
-            print
+                print(word, end=" ")
+            print('')
 
 def make_lm(rules, visited, which, prefix):
     if which in visited: return
@@ -106,7 +106,7 @@ def make_lm(rules, visited, which, prefix):
             if t in rules:
                 make_lm(rules, visited, t, new_prefix)
             elif t != 'END' and t != '|-':
-                print prefix, t
+                print(prefix, t)
                 new_prefix.append(t)
 
 def get_terminals(parser):

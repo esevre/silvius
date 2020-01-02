@@ -16,7 +16,7 @@ class ExecuteCommands(GenericASTTraversal):
         elif 'Windows' in platform.system():
             self.automator = NirCmdAutomator(real)
         else:
-            print "No suitable automator for platform", platform.system()
+            print("No suitable automator for platform", platform.system())
 
         self.postorder_flat()
         self.automator.flush()

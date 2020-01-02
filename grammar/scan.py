@@ -33,5 +33,5 @@ def scan(line):
         else:
             tokens.append(Token('ANY', wordno, t))
     tokens.append(Token('END'))
-    print tokens
+    print(tokens)
     return tokens
