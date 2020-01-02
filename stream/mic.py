@@ -52,7 +52,7 @@ class MyClient(WebSocketClient):
                     input = True,
                     input_device_index = mic,
                     frames_per_buffer = self.chunk)
-            except IOError, e:
+            except IOError as e:
                 if(e.errno == -9997 or e.errno == 'Invalid sample rate'):
                     new_sample_rate = int(pa.get_device_info_by_index(mic)['defaultSampleRate'])
                     if(sample_rate != new_sample_rate):
