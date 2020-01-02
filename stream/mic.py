@@ -38,13 +38,13 @@ class MyClient(WebSocketClient):
         while stream is None:
             try:
                 # try adjusting this if you want fewer network packets
-                self.chunk = 2048 * 2 * sample_rate / self.byterate
+                self.chunk = 2048 * 2 * sample_rate // self.byterate
 
                 mic = self.mic
                 if mic == -1:
                     mic = pa.get_default_input_device_info()['index']
-                    print >> sys.stderr, "Selecting default mic"
-                print >> sys.stderr, "Using mic #", mic
+                    print("Selecting default mic", file=sys.stderr)
+                print("Using mic #", mic, file=sys.stderr)
                 stream = pa.open(
                     rate = sample_rate,
                     format = pyaudio.paInt16,
@@ -58,15 +58,15 @@ class MyClient(WebSocketClient):
                     if(sample_rate != new_sample_rate):
                         sample_rate = new_sample_rate
                         continue
-                print >> sys.stderr, "\n", e
-                print >> sys.stderr, "\nCould not open microphone. Please try a different device."
+                print("\n", e, file=sys.stderr)
+                print("\nCould not open microphone. Please try a different device.", file=sys.stderr)
                 global fatal_error
                 fatal_error = True
                 sys.exit(0)
      
         def mic_to_ws():  # uses stream
             try:
-                print >> sys.stderr, "\nLISTENING TO MICROPHONE"
+                print("\nLISTENING TO MICROPHONE", file=sys.stderr)
                 last_state = None
                 while True:
                     data = stream.read(self.chunk)
@@ -80,9 +80,9 @@ class MyClient(WebSocketClient):
                         (data, last_state) = audioop.ratecv(data, 2, 1, sample_rate, self.byterate, last_state)
 
                     self.send_data(data)
-            except IOError, e:
+            except IOError as e:
                 # usually a broken pipe
-                print e
+                print(e)
             except AttributeError:
                 # currently raised when the socket gets closed by main thread
                 pass
@@ -108,28 +108,28 @@ class MyClient(WebSocketClient):
                 trans = response['result']['hypotheses'][0]['transcript']
                 if response['result']['final']:
                     if self.show_hypotheses:
-                        print >> sys.stderr, '\r%s' % trans.replace("\n", "\\n")
-                    print '%s' % trans.replace("\n", "\\n")  # final result!
+                        print('\r%s' % trans.replace("\n", "\\n"), file=sys.stderr)
+                    print('%s' % trans.replace("\n", "\\n"))  # final result!
                     sys.stdout.flush()
                 elif self.show_hypotheses:
                     print_trans = trans.replace("\n", "\\n")
                     if len(print_trans) > 80:
                         print_trans = "... %s" % print_trans[-76:]
-                    print >> sys.stderr, '\r%s' % print_trans,
+                    print('\r%s' % print_trans, file=sys.stderr, end='')
             if 'adaptation_state' in response:
                 if self.save_adaptation_state_filename:
-                    print >> sys.stderr, "Saving adaptation state to %s" % self.save_adaptation_state_filename
+                    print("Saving adaptation state to %s" % self.save_adaptation_state_filename, file=sys.stderr)
                     with open(self.save_adaptation_state_filename, "w") as f:
                         f.write(json.dumps(response['adaptation_state']))
         else:
-            print >> sys.stderr, "Received error from server (status %d)" % response['status']
+            print("Received error from server (status %d)" % response['status'], file=sys.stderr)
             if 'message' in response:
-                print >> sys.stderr, "Error message:",  response['message']
-            
+                print("Error message:", response['message'], file=sys.stderr)
+
             global reconnect_mode
             if reconnect_mode:
                 import time
-                print >> sys.stderr, "Sleeping for five seconds before reconnecting"
+                print("Sleeping for five seconds before reconnecting", file=sys.stderr)
                 time.sleep(5)
 
 
@@ -157,21 +157,21 @@ def setup():
     args = parser.parse_args()
 
     content_type = args.content_type
-    print >> sys.stderr, "Content-Type:", content_type
+    print("Content-Type:", content_type, file=sys.stderr)
 
     if(args.keep_going):
         global reconnect_mode
         global fatal_error
         reconnect_mode = True
         while(fatal_error == False):
-            print >> sys.stderr, "Reconnecting..."
+            print("Reconnecting...", file=sys.stderr)
             run(args, content_type, path)
     else:
         run(args, content_type, path)
 
 def run(args, content_type, path):
-    uri = "ws://%s:%s/%s?%s" % (args.server, args.port, path, urllib.urlencode([("content-type", content_type)]))
-    print >> sys.stderr, "Connecting to", uri
+    uri = "ws://%s:%s/%s?%s" % (args.server, args.port, path, urllib.parse.urlencode([("content-type", content_type)]))
+    print("Connecting to", uri, file=sys.stderr)
 
     ws = MyClient(uri, byterate=16000, mic=args.device, show_hypotheses=args.hypotheses,
                   save_adaptation_state_filename=args.save_adaptation_state, send_adaptation_state_filename=args.send_adaptation_state, audio_gate=args.audio_gate)
@@ -184,7 +184,7 @@ def main():
     try:
         setup()
     except KeyboardInterrupt:
-        print >> sys.stderr, "\nexiting..."
+        print("\nexiting...", file=sys.stderr)
 
 if __name__ == "__main__":
     main()
