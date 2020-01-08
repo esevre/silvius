@@ -33,6 +33,6 @@ def printAST(ast, level=0):
         print(ast, '{')
         for child in ast:
             printAST(child, level + 1)
-        print('    ' * level, '}')
+        print('    ' * level + '}')
     else:
         print(ast)
