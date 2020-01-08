@@ -1,8 +1,9 @@
 # Parser, based on John Aycock's SPARK examples
+from __future__ import absolute_import
 
 from spark import GenericParser
 from spark import GenericASTBuilder
-from ast import AST
+from grammar.ast import AST
 
 
 class GrammaticalError(Exception):
@@ -407,6 +408,7 @@ class CoreParser(GenericParser):
             return args[0].extra
         return args[0].type
 
+
 class SingleInputParser(CoreParser):
     def __init__(self):
         # if you have the issue that commands fail because spurious
@@ -414,7 +416,7 @@ class SingleInputParser(CoreParser):
         # try commenting the 'single_input' line, and uncommenting
         # the 'single_input_discard_junk' line.
         CoreParser.__init__(self, 'single_input')
-        #CoreParser.__init__(self, 'single_input_discard_junk')
+        # CoreParser.__init__(self, 'single_input_discard_junk')
         self.sleeping = False
 
     def p_sleep_commands(self, args):

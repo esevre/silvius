@@ -25,6 +25,7 @@ import re
 import sys
 import string
 
+
 def _namelist(instance):
 	namelist, namedict, classlist = [], {}, [instance.__class__]
 	for c in classlist:
@@ -35,6 +36,7 @@ def _namelist(instance):
 				namelist.append(name)
 				namedict[name] = 1
 	return namelist
+
 
 class GenericScanner:
 	def __init__(self, flags=0):
