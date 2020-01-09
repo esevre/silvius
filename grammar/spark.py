@@ -84,7 +84,7 @@ class GenericScanner:
 			self.pos = m.end()
 			for i in range(len(groups)):
 				if groups[i] is not None and \
-				   self.index2func.has_key(i):
+				   i in self.index2func:
 					self.index2func[i](groups[i])
 
 	def t_default(self, s):
@@ -151,7 +151,7 @@ class GenericParser:
 			for k, v in self.edges.items():
 				if v is None:
 					state, sym = k
-					if self.states.has_key(state):
+					if state in self.states:
 						self.goto(state, sym)
 						changes = 1
 		rv = self.__dict__.copy()
@@ -236,7 +236,7 @@ class GenericParser:
 				#  grammars.
 				#
 				for sym in rhs:
-					if not self.rules.has_key(sym):
+					if not sym in self.rules:
 						break
 				else:
 					tbd.append(rule)
@@ -279,7 +279,7 @@ class GenericParser:
 			n = len(rhs)
 			while i < n:
 				sym = rhs[i]
-				if not self.rules.has_key(sym) or \
+				if not sym in self.rules or \
 				   not self.nullable[sym]:
 					candidate = 0
 					i = i + 1
@@ -296,7 +296,7 @@ class GenericParser:
 				if candidate:
 					lhs = self._NULLABLE+lhs
 					rule = (lhs, rhs)
-				if self.newrules.has_key(lhs):
+				if lhs in self.newrules:
 					self.newrules[lhs].append(rule)
 				else:
 					self.newrules[lhs] = [ rule ]
@@ -323,7 +323,7 @@ class GenericParser:
 			self.states = { 0: self.makeState0() }
 			self.makeState(0, self._BOF)
 
-		for i in xrange(len(tokens)):
+		for i in range(len(tokens)):
 			sets.append([])
 
 			if sets[i] == []:
@@ -376,7 +376,7 @@ class GenericParser:
 
 		core.sort()
 		tcore = tuple(core)
-		if self.cores.has_key(tcore):
+		if tcore in self.cores:
 			return self.cores[tcore]
 		#
 		#  Nope, doesn't exist.  Compute it and the associated
@@ -400,13 +400,13 @@ class GenericParser:
 
 				nextSym = rhs[pos]
 				key = (X.stateno, nextSym)
-				if not rules.has_key(nextSym):
-					if not edges.has_key(key):
+				if not nextSym in rules:
+					if not key in edges:
 						edges[key] = None
 						X.T.append(nextSym)
 				else:
 					edges[key] = None
-					if not predicted.has_key(nextSym):
+					if not nextSym in predicted:
 						predicted[nextSym] = 1
 						for prule in rules[nextSym]:
 							ppos = self.skip(prule)
@@ -431,9 +431,9 @@ class GenericParser:
 		#  to do this without accidentally duplicating states.
 		#
 		core = predicted.keys()
-		core.sort()
+		sorted(core)
 		tcore = tuple(core)
-		if self.cores.has_key(tcore):
+		if tcore in self.cores:
 			self.edges[(k, None)] = self.cores[tcore]
 			return k
 
@@ -444,7 +444,7 @@ class GenericParser:
 
 	def goto(self, state, sym):
 		key = (state, sym)
-		if not self.edges.has_key(key):
+		if not key in self.edges:
 			#
 			#  No transitions from state on sym.
 			#
@@ -642,7 +642,7 @@ class GenericParser:
 
 		for i in range(len(rhs)-1, -1, -1):
 			sym = rhs[i]
-			if not self.newrules.has_key(sym):
+			if not sym in self.newrules:
 				if sym != self._BOF:
 					attr[i] = tokens[k-1]
 					key = (item, k)
@@ -671,7 +671,7 @@ class GenericParser:
 			name = self.rule2name[self.new2old[rule]]
 			sortlist.append((len(rhs), name))
 			name2index[name] = i
-		sortlist.sort()
+		sorted(sortlist)
 		list = map(lambda t: t[1], sortlist)
 		return rules[name2index[self.resolve(list)]]
 
